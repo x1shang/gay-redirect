@@ -23,8 +23,18 @@
 <meta name="twitter:image" content="https://navi.x1shang.top/og-cover.png">
 <script>
   (function () {
-    var to = 'https://navi.x1shang.top' + location.pathname + location.search + location.hash;
-    location.replace(to);
+    var suffix = location.pathname + location.search + location.hash;
+    var secure = 'https://navi.x1shang.top' + suffix;
+    var plain = 'http://navi.x1shang.top' + suffix;
+    var done = false;
+    function go(u) { if (!done) { done = true; location.replace(u); } }
+    // 新域名的证书有可能还在签发：先探一下 https，探不通就先走 http。
+    // 一旦新域名开了强制 HTTPS，这个 http 会被 301 回 https，所以退让路径是自愈的。
+    var probe = new Image();
+    probe.onload = function () { go(secure); };
+    probe.onerror = function () { go(plain); };
+    probe.src = 'https://navi.x1shang.top/og-cover.png?probe=' + Date.now();
+    setTimeout(function () { go(secure); }, 1500);   // 探测超时 → 仍按 https 走
   })();
 </script>
 <meta http-equiv="refresh" content="2;url=https://navi.x1shang.top/">

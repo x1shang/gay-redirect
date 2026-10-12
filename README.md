@@ -19,6 +19,10 @@ GitHub Pages 一个仓库只能绑**一个**自定义域名，所以「新域名
 GitHub Pages 只能发静态文件（没有服务端 301），所以跳转是 **JS + `<meta refresh>` 兜底**；
 JS 走 `location.pathname + search + hash`，因此子路径不会掉。
 
+JS 先拿 `og-cover.png` 探一下新域名的 https 通不通（证书可能要签发几十分钟）：
+通了直接去 https，探不通就先退到 http —— 新域名一旦开了强制 HTTPS，这个 http 会被 301 回 https，
+所以退让路径是**自愈**的，等证书签发完不需要再改这里。
+
 ## 文件
 
 ```
