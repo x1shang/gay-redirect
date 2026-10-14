@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>已搬家 · navi.x1shang.top</title>
+<title>空间曲率引擎启动中 · navi.x1shang.top</title>
 <!--
   老域名（我们都.是.gay / xn--vnqp08bwj8a.xn--0iv.gay）的跳转桩。
   内容已迁到 https://navi.x1shang.top/，这里只负责把人和路径一起送过去。
   路径靠 JS 保留（/wetbulb → https://navi.x1shang.top/wetbulb）；
   没有 JS 时退化成 <meta refresh> 到新域名首页。
-  改动请同时改 404.html（子路径都由 404.html 接管）。
+  ⚠️ index.html 与 404.html 是**同一份文件的拷贝**（子路径都由 404.html 接管），改一个必须拷另一个。
 -->
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://navi.x1shang.top/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="x1shang 的导航页">
-<meta property="og:title" content="这个域名搬家了 · navi.x1shang.top">
+<meta property="og:title" content="空间曲率引擎启动中 · navi.x1shang.top">
 <meta property="og:description" content="导航页搬到了 https://navi.x1shang.top/，老域名会保留路径把人送过去。">
 <meta property="og:url" content="https://navi.x1shang.top/">
 <meta property="og:image" content="https://navi.x1shang.top/og-cover.png">
@@ -26,66 +26,206 @@
     var suffix = location.pathname + location.search + location.hash;
     var secure = 'https://navi.x1shang.top' + suffix;
     var plain = 'http://navi.x1shang.top' + suffix;
+    var target = secure;
+    var started = Date.now();
+    var MIN_DWELL = 1100;      // 让「引擎启动」动画至少露一脸；想秒跳就改成 0
     var done = false;
-    function go(u) { if (!done) { done = true; location.replace(u); } }
-    // 新域名的证书有可能还在签发：先探一下 https，探不通就先走 http。
-    // 一旦新域名开了强制 HTTPS，这个 http 会被 301 回 https，所以退让路径是自愈的。
+    function go() {
+      if (done) return;
+      done = true;
+      var wait = Math.max(0, MIN_DWELL - (Date.now() - started));
+      setTimeout(function () { location.replace(target); }, wait);
+    }
+    // 新域名的证书可能还在签发：先探一下 https，探不通就先走 http。
+    // 一旦新域名开着强制 HTTPS，这个 http 会被 301 回 https，所以退让路径是自愈的。
     var probe = new Image();
-    probe.onload = function () { go(secure); };
-    probe.onerror = function () { go(plain); };
+    probe.onload = function () { target = secure; go(); };
+    probe.onerror = function () { target = plain; go(); };
     probe.src = 'https://navi.x1shang.top/og-cover.png?probe=' + Date.now();
-    setTimeout(function () { go(secure); }, 1500);   // 探测超时 → 仍按 https 走
+    setTimeout(go, MIN_DWELL + 500);   // 探测卡住也别一直等
   })();
 </script>
-<meta http-equiv="refresh" content="2;url=https://navi.x1shang.top/">
+<meta http-equiv="refresh" content="3;url=https://navi.x1shang.top/">
 <style>
-  :root{--bg:#08080e;--fg:#ececf4;--dim:#9a9ab0;--line:rgba(255,255,255,.10)}
+  :root{
+    --bg:#04050a;
+    --fg:#e9edff;
+    --dim:#77809f;
+    --line:rgba(255,255,255,.09);
+    --cyan:#67e8f9;
+    --pink:#ff6ec7;
+    --violet:#a78bfa;
+  }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0;display:flex;align-items:center;justify-content:center;padding:28px;
-    background:
-      radial-gradient(58rem 38rem at 12% -8%, rgba(255,110,199,.20), transparent 62%),
-      radial-gradient(52rem 36rem at 92% 112%, rgba(103,232,249,.18), transparent 62%),
-      var(--bg);
-    color:var(--fg);
+    margin:0;display:flex;align-items:center;justify-content:center;padding:26px;
+    background:var(--bg);color:var(--fg);overflow:hidden;
     font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  .box{
-    width:100%;max-width:560px;text-align:center;
-    border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);
-    padding:40px 30px 34px;backdrop-filter:blur(6px);
+
+  /* ───────── 背景：星尘光晕 + 坐标网格 + 下扫光带 ───────── */
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .bg::before{
+    content:"";position:absolute;inset:-20%;
+    background:
+      radial-gradient(38rem 30rem at 50% 46%, rgba(103,232,249,.16), transparent 62%),
+      radial-gradient(30rem 26rem at 14% 8%, rgba(255,110,199,.13), transparent 66%),
+      radial-gradient(32rem 28rem at 88% 96%, rgba(167,139,250,.15), transparent 66%);
+    animation:breathe 6.5s ease-in-out infinite;
   }
-  .bar{height:3px;border-radius:99px;background:linear-gradient(90deg,#ff6ec7,#f9a8d4,#a78bfa,#67e8f9);opacity:.85;margin:-8px 0 28px}
+  .bg::after{
+    content:"";position:absolute;inset:-10%;
+    background-image:
+      linear-gradient(rgba(103,232,249,.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(103,232,249,.055) 1px, transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 0%, rgba(0,0,0,.55) 40%, transparent 72%);
+            mask-image:radial-gradient(circle at 50% 45%, #000 0%, rgba(0,0,0,.55) 40%, transparent 72%);
+    animation:drift 18s linear infinite;
+  }
+  .scan{
+    position:absolute;left:0;right:0;height:26vh;top:-26vh;
+    background:linear-gradient(180deg, transparent, rgba(103,232,249,.055) 55%, transparent);
+    animation:scan 5.2s linear infinite;
+  }
+
+  /* ───────── 控制台面板 ───────── */
+  .hud{
+    position:relative;z-index:1;width:100%;max-width:520px;padding:22px 34px 32px;text-align:center;
+    border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+    box-shadow:0 0 0 1px rgba(103,232,249,.06), 0 26px 70px -30px rgba(103,232,249,.35), inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter:blur(7px);
+  }
+  .hud .br{position:absolute;width:15px;height:15px;border:1px solid rgba(103,232,249,.55)}
+  .br.tl{top:-1px;left:-1px;border-right:0;border-bottom:0;border-radius:18px 0 0 0}
+  .br.tr{top:-1px;right:-1px;border-left:0;border-bottom:0;border-radius:0 18px 0 0}
+  .br.bl{bottom:-1px;left:-1px;border-right:0;border-top:0;border-radius:0 0 0 18px}
+  .br.brr{bottom:-1px;right:-1px;border-left:0;border-top:0;border-radius:0 0 18px 0}
+
+  .hud-top{                       /* 顶部状态条：左编号、右在线灯 */
+    display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 26px;
+    font:10.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.16em;
+    text-transform:uppercase;color:#6b7492
+  }
+  .hud-top .live{display:inline-flex;align-items:center;gap:7px;color:#7fe3c8}
+  .hud-top .live i{width:5px;height:5px;border-radius:50%;background:#34d399;
+    box-shadow:0 0 9px 2px rgba(52,211,153,.55);animation:blink 1.7s ease-in-out infinite}
+
+  /* ───────── 引擎核心：雷达扇扫 + 三层同心环 ───────── */
+  .core-wrap{position:relative;width:184px;height:184px;margin:0 auto 28px}
+  .ring{position:absolute;inset:0;border-radius:50%}
+
+  .ring.sweep{                /* 背后的雷达扇扫：给转速一点纵深 */
+    background:conic-gradient(from 0deg,
+      rgba(103,232,249,.17) 0deg, rgba(103,232,249,.05) 22deg, transparent 58deg, transparent 360deg);
+    filter:blur(3px);
+    animation:spin 4.4s linear infinite;
+  }
+  .ring.ticks{                 /* 外圈刻度盘：40 道细齿，慢转 */
+    background:repeating-conic-gradient(from 0deg,
+      rgba(167,139,250,.6) 0deg .9deg, transparent .9deg 9deg);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+            mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+    animation:spin 9s linear infinite;
+  }
+  .ring.arc{                   /* 亮弧：青 → 品红，快转 */
+    inset:15px;
+    background:conic-gradient(from 0deg,
+      rgba(103,232,249,0) 0deg, rgba(103,232,249,.10) 130deg,
+      var(--cyan) 268deg, var(--pink) 344deg, rgba(255,110,199,0) 360deg);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
+            mask:radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
+    animation:spin 1.15s linear infinite;
+  }
+  .ring.arc.glow{filter:blur(12px);opacity:.8}   /* 同一弧的虚化副本 = 光晕 */
+  .ring.arc2{                  /* 内圈反向弧 */
+    inset:47px;
+    background:conic-gradient(from 180deg,
+      rgba(167,139,250,0) 0deg, rgba(167,139,250,.18) 150deg,
+      var(--violet) 300deg, rgba(167,139,250,0) 360deg);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+            mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    animation:spin 1.7s linear infinite reverse;
+  }
+  .dot{                        /* 核心光点 */
+    position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;
+    background:radial-gradient(circle, #ffffff 0%, var(--cyan) 45%, rgba(103,232,249,0) 72%);
+    box-shadow:0 0 16px 4px rgba(103,232,249,.55), 0 0 42px 12px rgba(103,232,249,.22);
+    animation:pulse 1.5s ease-in-out infinite;
+  }
+
+  /* ───────── 文案 ───────── */
   h1{
-    margin:0 0 10px;font-size:clamp(21px,4.6vw,27px);font-weight:700;
-    background:linear-gradient(100deg,#ffd9f0,#e9d5ff 45%,#cffafe);
+    margin:0 0 6px;font-size:clamp(17px,3.6vw,21px);font-weight:600;letter-spacing:.14em;
+    background:linear-gradient(100deg,#d9f6ff,#c9b6ff 52%,#ffd9f0);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  p{margin:0 0 22px;color:var(--dim)}
-  .host{
-    display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-    font-size:15.5px;color:#cffafe;border:1px dashed rgba(103,232,249,.45);
-    border-radius:11px;padding:7px 14px;margin-bottom:24px;word-break:break-all;
+  .dots{display:inline-flex;gap:5px;margin-left:10px;vertical-align:middle}
+  .dots i{width:4px;height:4px;border-radius:50%;background:var(--cyan);opacity:.2;animation:blink 1.2s ease-in-out infinite}
+  .dots i:nth-child(2){animation-delay:.2s;background:var(--violet)}
+  .dots i:nth-child(3){animation-delay:.4s;background:var(--pink)}
+
+  .bar{position:relative;width:250px;max-width:100%;height:2px;margin:24px auto 22px;
+       background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+  .bar::after{content:"";position:absolute;top:0;bottom:0;width:36%;border-radius:99px;
+       background:linear-gradient(90deg, rgba(103,232,249,0), var(--cyan) 30%, var(--pink) 72%, rgba(255,110,199,0));
+       animation:sweep 1.45s cubic-bezier(.55,0,.45,1) infinite}
+
+  .coord{
+    margin:0 0 5px;font:12.5px/1.9 ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+    color:var(--dim);letter-spacing:.02em;
+    overflow-wrap:anywhere;word-break:break-word
   }
-  a.go{
-    display:inline-block;text-decoration:none;color:#0a0a11;font-weight:600;
-    background:linear-gradient(100deg,#ff9ad5,#c4b5fd 55%,#8ee9f7);
-    border-radius:12px;padding:11px 22px;
+  .coord:last-of-type{margin-bottom:0}
+  .coord b{color:#8b95b8;font-weight:500;margin-right:8px}
+  .coord a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(103,232,249,.35)}
+  .coord a:hover{color:#cffafe;border-bottom-color:rgba(207,250,254,.7)}
+  .hint{margin:15px 0 0;font-size:11.5px;color:#5d6584;letter-spacing:.06em}
+
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(.86);opacity:.85}50%{transform:scale(1.12);opacity:1}}
+  @keyframes blink{0%,100%{opacity:.18}50%{opacity:1}}
+  @keyframes sweep{0%{transform:translateX(-115%)}100%{transform:translateX(320%)}}
+  @keyframes scan{0%{top:-26vh}100%{top:104vh}}
+  @keyframes breathe{0%,100%{opacity:.85}50%{opacity:1}}
+  @keyframes drift{to{background-position:34px 34px, 34px 34px}}
+  @media (prefers-reduced-motion: reduce){
+    .ring.arc,.ring.arc2{animation-duration:3.4s}
+    .ring.ticks,.ring.sweep,.scan,.bar::after{animation-duration:6s}
+    .dot,.dots i{animation:none}
   }
-  a.go:hover{filter:brightness(1.06)}
-  .note{margin:22px 0 0;font-size:12.5px;color:#6f6f85}
 </style>
 </head>
 <body>
-  <div class="box">
+  <div class="bg"><div class="scan"></div></div>
+
+  <main class="hud">
+    <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brr"></span>
+
+    <div class="hud-top">
+      <span>WARP DRIVE · CR-01</span>
+      <span class="live"><i></i>ONLINE</span>
+    </div>
+
+    <div class="core-wrap" role="img" aria-label="曲率引擎启动中">
+      <div class="ring sweep"></div>
+      <div class="ring ticks"></div>
+      <div class="ring arc glow"></div>
+      <div class="ring arc"></div>
+      <div class="ring arc2"></div>
+      <div class="dot"></div>
+    </div>
+
+    <h1>空间曲率引擎启动中<span class="dots"><i></i><i></i><i></i></span></h1>
+
     <div class="bar"></div>
-    <h1>这个域名搬家了</h1>
-    <p>导航页现在住在 ——</p>
-    <div class="host">navi.x1shang.top</div>
-    <p style="margin:0 0 6px"><a class="go" href="https://navi.x1shang.top/">这就过去 →</a></p>
-    <p class="note">老域名会一直把人送到新地址，原来收藏的 <code>/wetbulb</code> 这类路径也会跟着走。</p>
-  </div>
+
+    <p class="coord"><b>旧坐标</b>我们都.是.gay</p>
+    <p class="coord"><b>跃迁坐标</b><a href="https://navi.x1shang.top/">navi.x1shang.top</a></p>
+    <p class="hint">自动跃迁已接管 · 若未跳转请点上方坐标</p>
+  </main>
 </body>
 </html>
