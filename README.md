@@ -10,10 +10,10 @@
 
 - `index.html`：根路径入口。
 - `404.html`：GitHub Pages 子路径入口，必须与 `index.html` 字节一致。
-- `assets/`：fishstew 图片、Manrope 字体及其 SIL Open Font License。
+- `assets/`：fishstew 立绘（`fishstew-inspector.avif` 177 KB + `fishstew-inspector.webp` 211 KB，页面用 `<picture>` 优先 AVIF、回退 WebP；原 1.3 MB PNG 归档在 workspace 的 `archive/2026-10-22-跳转页立绘原图/`）、Manrope 字体及其 SIL Open Font License。
 - `CNAME`、`.nojekyll`：GitHub Pages 配置。
 
-样式与资源来自提供的 `x1shang-redirect`；吉祥物由 image_gen 基于 fishstew 原图编辑。资源使用根路径，确保任意深度的旧链接都能正常显示页面。
+样式与资源来自提供的 `x1shang-redirect`；吉祥物由 image_gen 基于 fishstew 原图编辑，2026-10-22 压缩（原 PNG 1,355 KB → AVIF 177 KB / WebP 211 KB，1254×1254 不变，详见 workspace `docs/done.md` 第 19 轮）。资源使用根路径，确保任意深度的旧链接都能正常显示页面。
 
 修改 `index.html` 后同步到 `404.html`，推送 `main` 即由现有 GitHub Pages 发布，无需构建或更改 DNS。
 

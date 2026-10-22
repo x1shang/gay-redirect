@@ -156,6 +156,7 @@
       line-height: 1.5;
       text-wrap: balance;
     }
+    .mascot-src { display: contents; }   /* <picture> 不进布局，img 仍是直接子元素，居中规则不变 */
     .mascot {
       display: block;
       width: clamp(230px, 29vw, 320px);
@@ -249,7 +250,11 @@
   <main>
     <section class="checkpoint" aria-labelledby="heading">
       <h1 id="heading">正在确认你是不是机器人！</h1>
-      <img class="mascot" id="mascot" src="/assets/fishstew-inspector.png" width="1254" height="1254" alt="蓝发的 fishstew 坐在鱼汤锅里，拿着放大镜认真观察你。" fetchpriority="high" decoding="async">
+      <picture class="mascot-src">
+        <source type="image/avif" srcset="/assets/fishstew-inspector.avif">
+        <source type="image/webp" srcset="/assets/fishstew-inspector.webp">
+        <img class="mascot" id="mascot" src="/assets/fishstew-inspector.webp" width="1254" height="1254" alt="蓝发的 fishstew 坐在鱼汤锅里，拿着放大镜认真观察你。" fetchpriority="high" decoding="async">
+      </picture>
       <p class="loading" role="status"><span class="spinner" aria-hidden="true"></span><span id="status-text">加载中...</span></p>
       <details class="details">
         <summary>详情</summary>
