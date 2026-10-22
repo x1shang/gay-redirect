@@ -1,233 +1,306 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>空间曲率引擎启动中 · navi.x1shang.top</title>
-<!--
-  老域名（我们都.是.gay / xn--vnqp08bwj8a.xn--0iv.gay）的跳转桩。
-  内容已迁到 https://navi.x1shang.top/，这里只负责把人和路径一起送过去。
-  路径靠 JS 保留（/wetbulb → https://navi.x1shang.top/wetbulb）；
-  没有 JS 时退化成 <meta refresh> 到新域名首页。
-  ⚠️ index.html 与 404.html 是**同一份文件的拷贝**（子路径都由 404.html 接管），改一个必须拷另一个。
--->
-<meta name="robots" content="noindex, nofollow">
-<!-- 图标借导航页那一枚（老域名里不放副本；反正 1 秒后就跳过去了） -->
-<link rel="icon" type="image/x-icon" href="https://navi.x1shang.top/favicon.ico">
-<link rel="canonical" href="https://navi.x1shang.top/">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="x1shang 的导航页">
-<meta property="og:title" content="空间曲率引擎启动中 · navi.x1shang.top">
-<meta property="og:description" content="导航页搬到了 https://navi.x1shang.top/，老域名会保留路径把人送过去。">
-<meta property="og:url" content="https://navi.x1shang.top/">
-<meta property="og:image" content="https://navi.x1shang.top/og-cover.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://navi.x1shang.top/og-cover.png">
-<script>
-  (function () {
-    var suffix = location.pathname + location.search + location.hash;
-    var secure = 'https://navi.x1shang.top' + suffix;
-    var plain = 'http://navi.x1shang.top' + suffix;
-    var target = secure;
-    var started = Date.now();
-    var MIN_DWELL = 1100;      // 让「引擎启动」动画至少露一脸；想秒跳就改成 0
-    var done = false;
-    function go() {
-      if (done) return;
-      done = true;
-      var wait = Math.max(0, MIN_DWELL - (Date.now() - started));
-      setTimeout(function () { location.replace(target); }, wait);
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f7">
+  <meta name="description" content="稍等片刻，正在前往 x1shang 的导航页。">
+  <meta name="robots" content="noindex, follow">
+  <title>稍等片刻 · x1shang</title>
+  <link rel="canonical" href="https://navi.x1shang.top/">
+  <noscript><meta http-equiv="refresh" content="6;url=https://navi.x1shang.top/"></noscript>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f4f5f7'/%3E%3Ctext x='9' y='44' font-family='Arial,sans-serif' font-size='38' font-weight='700' fill='%232f6fb5'%3Ex1%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="/assets/manrope-variable.ttf" as="font" type="font/ttf" crossorigin>
+  <script>
+    (() => {
+      const query = new URLSearchParams(location.search);
+      const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+      let preference = 'system';
+      try { preference = localStorage.getItem('x1-theme') || 'system'; } catch {}
+      const previewTheme = query.get('preview') === '1' ? query.get('theme') : null;
+      if (previewTheme === 'light' || previewTheme === 'dark') preference = previewTheme;
+      if (!['light', 'dark', 'system'].includes(preference)) preference = 'system';
+      function applyTheme() {
+        const theme = preference === 'system' ? (systemTheme.matches ? 'dark' : 'light') : preference;
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#111820' : '#f4f5f7';
+        const toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+          toggle.setAttribute('aria-label', theme === 'dark' ? '切换浅色模式' : '切换暗色模式');
+          toggle.setAttribute('aria-pressed', String(theme === 'dark'));
+          toggle.title = toggle.getAttribute('aria-label');
+        }
+      }
+      systemTheme.addEventListener('change', applyTheme);
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggle = document.getElementById('theme-toggle');
+        toggle.hidden = false;
+        toggle.addEventListener('click', () => {
+          preference = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          try { localStorage.setItem('x1-theme', preference); } catch {}
+          applyTheme();
+        });
+        applyTheme();
+      });
+      applyTheme();
+    })();
+  </script>
+  <style>
+    @font-face {
+      font-family: Manrope;
+      font-style: normal;
+      font-weight: 200 800;
+      font-display: swap;
+      src: url('/assets/manrope-variable.ttf') format('truetype');
     }
-    // 新域名的证书可能还在签发：先探一下 https，探不通就先走 http。
-    // 一旦新域名开着强制 HTTPS，这个 http 会被 301 回 https，所以退让路径是自愈的。
-    var probe = new Image();
-    probe.onload = function () { target = secure; go(); };
-    probe.onerror = function () { target = plain; go(); };
-    probe.src = 'https://navi.x1shang.top/og-cover.png?probe=' + Date.now();
-    setTimeout(go, MIN_DWELL + 500);   // 探测卡住也别一直等
-  })();
-</script>
-<meta http-equiv="refresh" content="3;url=https://navi.x1shang.top/">
-<style>
-  :root{
-    --bg:#04050a;
-    --fg:#e9edff;
-    --dim:#77809f;
-    --line:rgba(255,255,255,.09);
-    --cyan:#67e8f9;
-    --pink:#ff6ec7;
-    --violet:#a78bfa;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;display:flex;align-items:center;justify-content:center;padding:26px;
-    background:var(--bg);color:var(--fg);overflow:hidden;
-    font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
 
-  /* ───────── 背景：星尘光晕 + 坐标网格 + 下扫光带 ───────── */
-  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .bg::before{
-    content:"";position:absolute;inset:-20%;
-    background:
-      radial-gradient(38rem 30rem at 50% 46%, rgba(103,232,249,.16), transparent 62%),
-      radial-gradient(30rem 26rem at 14% 8%, rgba(255,110,199,.13), transparent 66%),
-      radial-gradient(32rem 28rem at 88% 96%, rgba(167,139,250,.15), transparent 66%);
-    animation:breathe 6.5s ease-in-out infinite;
-  }
-  .bg::after{
-    content:"";position:absolute;inset:-10%;
-    background-image:
-      linear-gradient(rgba(103,232,249,.055) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(103,232,249,.055) 1px, transparent 1px);
-    background-size:34px 34px;
-    -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 0%, rgba(0,0,0,.55) 40%, transparent 72%);
-            mask-image:radial-gradient(circle at 50% 45%, #000 0%, rgba(0,0,0,.55) 40%, transparent 72%);
-    animation:drift 18s linear infinite;
-  }
-  .scan{
-    position:absolute;left:0;right:0;height:26vh;top:-26vh;
-    background:linear-gradient(180deg, transparent, rgba(103,232,249,.055) 55%, transparent);
-    animation:scan 5.2s linear infinite;
-  }
+    :root {
+      color-scheme: light;
+      --ink: #28323a;
+      --muted: #7f878f;
+      --faint: #98a0a7;
+      --link: #2f6fb5;
+      --link-hover: #4a90d9;
+      --cloud: #f4f5f7;
+      --cloud-2: #eceff3;
+      --line: rgba(120, 130, 140, .2);
+      --glow: #fff;
+      --heart: #f07676;
+      --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+    }
 
-  /* ───────── 控制台面板 ───────── */
-  .hud{
-    position:relative;z-index:1;width:100%;max-width:520px;padding:22px 34px 32px;text-align:center;
-    border:1px solid var(--line);border-radius:18px;
-    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
-    box-shadow:0 0 0 1px rgba(103,232,249,.06), 0 26px 70px -30px rgba(103,232,249,.35), inset 0 1px 0 rgba(255,255,255,.05);
-    backdrop-filter:blur(7px);
-  }
-  .hud .br{position:absolute;width:15px;height:15px;border:1px solid rgba(103,232,249,.55)}
-  .br.tl{top:-1px;left:-1px;border-right:0;border-bottom:0;border-radius:18px 0 0 0}
-  .br.tr{top:-1px;right:-1px;border-left:0;border-bottom:0;border-radius:0 18px 0 0}
-  .br.bl{bottom:-1px;left:-1px;border-right:0;border-top:0;border-radius:0 0 0 18px}
-  .br.brr{bottom:-1px;right:-1px;border-left:0;border-top:0;border-radius:0 0 18px 0}
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #dce5ef;
+      --muted: #a9b6c5;
+      --faint: #95a5b8;
+      --link: #87b9f3;
+      --link-hover: #bad8ff;
+      --cloud: #111820;
+      --cloud-2: #1d2835;
+      --line: rgba(157, 176, 199, .2);
+      --glow: #1b2736;
+    }
 
-  .hud-top{                       /* 顶部状态条：左编号、右在线灯 */
-    display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 26px;
-    font:10.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.16em;
-    text-transform:uppercase;color:#6b7492
-  }
-  .hud-top .live{display:inline-flex;align-items:center;gap:7px;color:#7fe3c8}
-  .hud-top .live i{width:5px;height:5px;border-radius:50%;background:#34d399;
-    box-shadow:0 0 9px 2px rgba(52,211,153,.55);animation:blink 1.7s ease-in-out infinite}
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { min-width: 280px; }
+    body {
+      margin: 0;
+      background: var(--cloud);
+      background-image: radial-gradient(ellipse at 72% 30%, var(--glow), transparent 62%);
+      color: var(--ink);
+      font: 15px/1.8 Manrope, 'Microsoft YaHei', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { color: var(--link-hover); text-decoration: underline; text-underline-offset: 5px; }
+    :focus-visible { outline: 2px solid var(--link); outline-offset: 5px; }
+    button { font: inherit; color: inherit; cursor: pointer; }
 
-  /* ───────── 引擎核心：雷达扇扫 + 三层同心环 ───────── */
-  .core-wrap{position:relative;width:184px;height:184px;margin:0 auto 28px}
-  .ring{position:absolute;inset:0;border-radius:50%}
+    .masthead {
+      position: absolute;
+      inset: 28px 4% auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .wordmark {
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+    .wordmark:hover { color: var(--ink); text-decoration: none; }
+    .masthead-caption {
+      margin-right: auto;
+      margin-left: 10px;
+      color: var(--faint);
+      font-size: 9px;
+      letter-spacing: 2.4px;
+    }
+    .theme-toggle {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--muted);
+    }
+    .theme-toggle:hover { border-color: var(--line); background: var(--cloud-2); color: var(--ink); }
+    .theme-toggle svg { grid-area: 1 / 1; width: 17px; height: 17px; }
+    .sun { display: none; }
+    [data-theme="dark"] .sun { display: block; }
+    [data-theme="dark"] .moon { display: none; }
 
-  .ring.sweep{                /* 背后的雷达扇扫：给转速一点纵深 */
-    background:conic-gradient(from 0deg,
-      rgba(103,232,249,.17) 0deg, rgba(103,232,249,.05) 22deg, transparent 58deg, transparent 360deg);
-    filter:blur(3px);
-    animation:spin 4.4s linear infinite;
-  }
-  .ring.ticks{                 /* 外圈刻度盘：40 道细齿，慢转 */
-    background:repeating-conic-gradient(from 0deg,
-      rgba(167,139,250,.6) 0deg .9deg, transparent .9deg 9deg);
-    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
-            mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
-    animation:spin 9s linear infinite;
-  }
-  .ring.arc{                   /* 亮弧：青 → 品红，快转 */
-    inset:15px;
-    background:conic-gradient(from 0deg,
-      rgba(103,232,249,0) 0deg, rgba(103,232,249,.10) 130deg,
-      var(--cyan) 268deg, var(--pink) 344deg, rgba(255,110,199,0) 360deg);
-    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
-            mask:radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
-    animation:spin 1.15s linear infinite;
-  }
-  .ring.arc.glow{filter:blur(12px);opacity:.8}   /* 同一弧的虚化副本 = 光晕 */
-  .ring.arc2{                  /* 内圈反向弧 */
-    inset:47px;
-    background:conic-gradient(from 180deg,
-      rgba(167,139,250,0) 0deg, rgba(167,139,250,.18) 150deg,
-      var(--violet) 300deg, rgba(167,139,250,0) 360deg);
-    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-            mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-    animation:spin 1.7s linear infinite reverse;
-  }
-  .dot{                        /* 核心光点 */
-    position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;
-    background:radial-gradient(circle, #ffffff 0%, var(--cyan) 45%, rgba(103,232,249,0) 72%);
-    box-shadow:0 0 16px 4px rgba(103,232,249,.55), 0 0 42px 12px rgba(103,232,249,.22);
-    animation:pulse 1.5s ease-in-out infinite;
-  }
+    main {
+      display: flex;
+      min-height: 100vh;
+      min-height: 100svh;
+      align-items: center;
+      justify-content: center;
+      padding: 112px 24px 76px;
+      text-align: center;
+    }
+    .checkpoint { width: min(100%, 820px); }
+    h1 {
+      margin: 0 0 35px;
+      font-size: clamp(21px, 3.4vw, 36px);
+      font-weight: 700;
+      letter-spacing: -.035em;
+      line-height: 1.5;
+      text-wrap: balance;
+    }
+    .mascot {
+      display: block;
+      width: clamp(230px, 29vw, 320px);
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto 23px;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .loading {
+      display: flex;
+      min-height: 27px;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 14px;
+    }
+    .spinner {
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--line);
+      border-top-color: var(--link);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .details { margin: 15px auto 0; font-size: 12px; color: var(--muted); }
+    summary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before {
+      width: 0;
+      height: 0;
+      border-top: 3px solid transparent;
+      border-bottom: 3px solid transparent;
+      border-left: 4px solid currentColor;
+      content: '';
+      transition: transform .18s ease;
+    }
+    summary:hover { color: var(--link); }
+    details[open] summary::before { transform: rotate(90deg); }
+    .details-copy { max-width: 350px; margin: 12px auto 0; padding: 14px 18px; border-top: 1px solid var(--line); }
+    .details-copy p { margin: 0; }
+    .details-copy p + p { margin-top: 5px; }
+    .destination { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+    .credit { margin: 31px 0 0; color: var(--muted); font-size: 13px; line-height: 2.1; text-wrap: balance; }
+    .credit .author { font-weight: 600; }
+    .country { font-family: var(--mono); font-size: .95em; }
+    .heart { display: inline-block; margin: 0 3px; color: var(--heart); }
+    .site-link { white-space: nowrap; }
+    noscript p { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
 
-  /* ───────── 文案 ───────── */
-  h1{
-    margin:0 0 6px;font-size:clamp(17px,3.6vw,21px);font-weight:600;letter-spacing:.14em;
-    background:linear-gradient(100deg,#d9f6ff,#c9b6ff 52%,#ffd9f0);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .dots{display:inline-flex;gap:5px;margin-left:10px;vertical-align:middle}
-  .dots i{width:4px;height:4px;border-radius:50%;background:var(--cyan);opacity:.2;animation:blink 1.2s ease-in-out infinite}
-  .dots i:nth-child(2){animation-delay:.2s;background:var(--violet)}
-  .dots i:nth-child(3){animation-delay:.4s;background:var(--pink)}
-
-  .bar{position:relative;width:250px;max-width:100%;height:2px;margin:24px auto 22px;
-       background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
-  .bar::after{content:"";position:absolute;top:0;bottom:0;width:36%;border-radius:99px;
-       background:linear-gradient(90deg, rgba(103,232,249,0), var(--cyan) 30%, var(--pink) 72%, rgba(255,110,199,0));
-       animation:sweep 1.45s cubic-bezier(.55,0,.45,1) infinite}
-
-  .coord{
-    margin:0 0 5px;font:12.5px/1.9 ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
-    color:var(--dim);letter-spacing:.02em;
-    overflow-wrap:anywhere;word-break:break-word
-  }
-  .coord:last-of-type{margin-bottom:0}
-  .coord b{color:#8b95b8;font-weight:500;margin-right:8px}
-  .coord a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(103,232,249,.35)}
-  .coord a:hover{color:#cffafe;border-bottom-color:rgba(207,250,254,.7)}
-  .hint{margin:15px 0 0;font-size:11.5px;color:#5d6584;letter-spacing:.06em}
-
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes pulse{0%,100%{transform:scale(.86);opacity:.85}50%{transform:scale(1.12);opacity:1}}
-  @keyframes blink{0%,100%{opacity:.18}50%{opacity:1}}
-  @keyframes sweep{0%{transform:translateX(-115%)}100%{transform:translateX(320%)}}
-  @keyframes scan{0%{top:-26vh}100%{top:104vh}}
-  @keyframes breathe{0%,100%{opacity:.85}50%{opacity:1}}
-  @keyframes drift{to{background-position:34px 34px, 34px 34px}}
-  @media (prefers-reduced-motion: reduce){
-    .ring.arc,.ring.arc2{animation-duration:3.4s}
-    .ring.ticks,.ring.sweep,.scan,.bar::after{animation-duration:6s}
-    .dot,.dots i{animation:none}
-  }
-</style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 480px) {
+      .masthead { inset: 22px 22px auto; }
+      .masthead-caption { margin-left: 2px; font-size: 8px; letter-spacing: 1.8px; }
+      main { padding: 105px 20px 64px; }
+      h1 { margin-bottom: 28px; font-size: clamp(18px, 5.6vw, 25px); }
+      .mascot { width: min(76vw, 280px); margin-bottom: 23px; }
+      .credit { max-width: 290px; margin: 27px auto 0; font-size: 12px; }
+    }
+    @media (max-height: 600px) and (min-width: 481px) {
+      main { padding-top: 94px; padding-bottom: 35px; }
+      h1 { margin-bottom: 18px; font-size: 27px; }
+      .mascot { width: 210px; margin-bottom: 12px; }
+      .credit { margin-top: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
 </head>
 <body>
-  <div class="bg"><div class="scan"></div></div>
-
-  <main class="hud">
-    <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brr"></span>
-
-    <div class="hud-top">
-      <span>WARP DRIVE · CR-01</span>
-      <span class="live"><i></i>ONLINE</span>
-    </div>
-
-    <div class="core-wrap" role="img" aria-label="曲率引擎启动中">
-      <div class="ring sweep"></div>
-      <div class="ring ticks"></div>
-      <div class="ring arc glow"></div>
-      <div class="ring arc"></div>
-      <div class="ring arc2"></div>
-      <div class="dot"></div>
-    </div>
-
-    <h1>空间曲率引擎启动中<span class="dots"><i></i><i></i><i></i></span></h1>
-
-    <div class="bar"></div>
-
-    <p class="coord"><b>旧坐标</b>我们都.是.gay</p>
-    <p class="coord"><b>跃迁坐标</b><a href="https://navi.x1shang.top/">navi.x1shang.top</a></p>
-    <p class="hint">自动跃迁已接管 · 若未跳转请点上方坐标</p>
+  <header class="masthead">
+    <a class="wordmark" data-redirect href="https://navi.x1shang.top/" aria-label="前往 x1shang 导航页">x1 /</a>
+    <span class="masthead-caption">A PERSONAL SPACE</span>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换暗色模式" aria-pressed="false" hidden>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.8"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+    </button>
+  </header>
+  <main>
+    <section class="checkpoint" aria-labelledby="heading">
+      <h1 id="heading">正在确认你是不是机器人！</h1>
+      <img class="mascot" id="mascot" src="/assets/fishstew-inspector.png" width="1254" height="1254" alt="蓝发的 fishstew 坐在鱼汤锅里，拿着放大镜认真观察你。" fetchpriority="high" decoding="async">
+      <p class="loading" role="status"><span class="spinner" aria-hidden="true"></span><span id="status-text">加载中...</span></p>
+      <details class="details">
+        <summary>详情</summary>
+        <div class="details-copy">
+          <p>稍等片刻，正在前往 x1shang 的导航页。</p>
+          <p id="redirect-note">将在 <span id="countdown">6</span> 秒后自动跳转；也可以直接点击下方链接。</p>
+          <p class="destination">→ <a id="destination-link" data-redirect href="https://navi.x1shang.top/">https://navi.x1shang.top/</a></p>
+        </div>
+      </details>
+      <p class="credit"><a class="author" href="https://x1shang.top/">x1shang</a>在<span class="country">CN</span>用<span class="heart">♥</span>制作，正在跳转到<a class="site-link" data-redirect href="https://navi.x1shang.top/">navi.x1shang.top</a></p>
+      <noscript><p>将在 6 秒后进入导航页，也可以点击上方 navi.x1shang.top 链接。</p></noscript>
+    </section>
   </main>
+  <script>
+    (() => {
+      // Both entry points keep the original path, query and fragment.
+      const destination = 'https://navi.x1shang.top' + location.pathname + location.search + location.hash;
+      document.querySelectorAll('[data-redirect]').forEach(link => { link.href = destination; });
+      document.getElementById('destination-link').textContent = destination;
+      const redirectDelay = 6000;
+      const preview = new URLSearchParams(location.search).get('preview') === '1';
+      const status = document.getElementById('status-text');
+      const countdown = document.getElementById('countdown');
+      let redirectTimer;
+      let countdownTimer;
+
+      function clearTimers() {
+        clearTimeout(redirectTimer);
+        clearInterval(countdownTimer);
+      }
+
+      function startRedirect() {
+        if (preview) {
+          document.getElementById('redirect-note').textContent = '预览模式：自动跳转已暂停。';
+          return;
+        }
+        const deadline = Date.now() + redirectDelay;
+        countdownTimer = setInterval(() => {
+          countdown.textContent = String(Math.max(0, Math.ceil((deadline - Date.now()) / 1000)));
+        }, 250);
+        redirectTimer = setTimeout(() => {
+          clearTimers();
+          status.textContent = '正在跳转...';
+          location.replace(destination);
+        }, redirectDelay);
+      }
+
+      window.addEventListener('pagehide', clearTimers);
+      if (document.readyState === 'complete') startRedirect();
+      else window.addEventListener('load', startRedirect, { once: true });
+    })();
+  </script>
 </body>
 </html>
